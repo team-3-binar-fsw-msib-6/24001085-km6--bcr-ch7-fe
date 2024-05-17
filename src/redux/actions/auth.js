@@ -150,7 +150,8 @@ export const vote = (navigate, voteId) => async (dispatch, getState) => {
     const { message } = voteRes.data;
     setUser(data);
     toast(message);
-    return navigate("/");
+    window.location = "/";
+    // return navigate("/");
   } catch (error) {
     toast(error?.response?.data?.message || "Error Occured");
     dispatch(logout());

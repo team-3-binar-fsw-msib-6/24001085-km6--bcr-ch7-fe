@@ -12,46 +12,38 @@ import { io } from "socket.io-client";
 import { LoaderCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setVotes } from "@/redux/reducers/vote";
-import { Link } from "react-router-dom";
+import { getVotes } from "@/redux/actions/vote";
 
-const socket = io(import.meta.env.VITE_BACKEND_API);
+const socket = io(import.meta.env.VITE_BACKEND_API, {
+  transports: ["websocket"],
+});
+
 const BarChart = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
-  const [data, setData] = useState([]);
 
   const { votes } = useSelector((state) => state.vote);
 
   useEffect(() => {
-    socket.on("connect", () => {});
+    dispatch(getVotes());
+  }, [dispatch]);
 
+  useEffect(() => {
     socket.on("update", (votes) => {
       if (!votes) {
         dispatch(setVotes([]));
       }
-      setData(votes);
       dispatch(setVotes(votes));
     });
-
-    // socket.on("connect_error", () => {
-    //   console.error("socket connect error!");
-    //   socket.close();
-    // });
-
-    // return () => {
-    //   socket.close();
-    // };
-  }, [dispatch]);
+  }, [dispatch, votes]);
 
   return (
     <>
       {console.log(votes)}
-      {!data && <LoaderCircle className="h-12 w-12 animate-spin " />}
-      {data && data.length > 0 && (
+      {!votes && <LoaderCircle className="h-12 w-12 animate-spin " />}
+      {votes && (
         <ResponsiveContainer width={"100%"} height={350}>
-          {console.log(data)}
-
-          <BarGraph data={data}>
+          <BarGraph data={votes}>
             <XAxis
               dataKey="label"
               tickLine={false}

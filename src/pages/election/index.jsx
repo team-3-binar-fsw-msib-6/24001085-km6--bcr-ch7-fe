@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
@@ -6,7 +5,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import VoteDialog from "@/components/VoteDialog";
-import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 
