@@ -1,32 +1,80 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./App.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-import Home from "./pages/home";
-import Register from "./pages/register";
-import Login from "./pages/login";
-import Election from "./pages/election";
+import Layout from "./components/Layout";
+import AuthLayout from "./components/AuthLayout";
+import { ThemeProvider } from "./utils/ThemeProvider";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import {
+  ElectionPage,
+  HomePage,
+  LoginPage,
+  NonProtectedPage,
+  NotFoundPage,
+  ProtectedPage,
+  RegisterPage,
+} from "./pages";
+import { Toaster } from "sonner";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <ProtectedPage>
+        <Layout>
+          <HomePage />
+        </Layout>
+      </ProtectedPage>
+    ),
   },
   {
     path: "/register",
-    element: <Register />,
+    element: (
+      <NonProtectedPage>
+        <AuthLayout>
+          <RegisterPage />
+        </AuthLayout>
+      </NonProtectedPage>
+    ),
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <NonProtectedPage>
+        <AuthLayout>
+          <LoginPage />
+        </AuthLayout>
+      </NonProtectedPage>
+    ),
   },
   {
     path: "/election",
-    element: <Election />,
+    element: (
+      <ProtectedPage>
+        <Layout>
+          <ElectionPage />
+        </Layout>
+      </ProtectedPage>
+    ),
+  },
+  {
+    path: "/*",
+    element: <NotFoundPage />,
   },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <Provider store={store}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+          <RouterProvider router={router} />
+          <Toaster />
+        </ThemeProvider>
+      </GoogleOAuthProvider>
+    </Provider>
+  );
 }
 
 export default App;
